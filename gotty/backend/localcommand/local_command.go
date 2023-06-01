@@ -1,6 +1,7 @@
 package localcommand
 
 import (
+	"log"
 	"os"
 	"os/exec"
 	"syscall"
@@ -30,7 +31,7 @@ type LocalCommand struct {
 
 func New(command string, argv []string, options ...Option) (*LocalCommand, error) {
 	cmd := exec.Command(command, argv...)
-
+	log.Printf("Run command %s argv: %#v \n", command, argv)
 	pty, err := pty.Start(cmd)
 	if err != nil {
 		// todo close cmd?
