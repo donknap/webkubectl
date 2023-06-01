@@ -384,7 +384,7 @@ func (server *Server) handleKubeTokenApi(w http.ResponseWriter, r *http.Request)
 	token := randomstring.Generate(20)
 	ttyParameter := cache.TtyParameter{
 		Title: request.Name,
-		Arg:   fmt.Sprintf("--api-server=%s --token=%s --type=token", strings.Replace(request.ApiServer, " ", "", -1), strings.Replace(request.Token, " ", "", -1)),
+		Arg:   fmt.Sprintf("--api-server=%s --token=%s --extend-params=%s --type=token", strings.Replace(request.ApiServer, " ", "", -1), strings.Replace(request.Token, " ", "", -1), request.ExtendParams),
 	}
 	if err := server.cache.Add(token, &ttyParameter, time.Duration(server.options.TokenExpiresDuration)*time.Second); err != nil {
 		log.Printf("save token and ttyParam err:%s", err.Error())

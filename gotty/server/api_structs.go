@@ -13,7 +13,8 @@ type KubeConfigRequest struct {
 }
 
 type KubeTokenRequest struct {
-	Name      string `json:"name"`
-	ApiServer string `json:"apiServer"`
-	Token     string `json:"token"`
+	Name         string `json:"name"`
+	ApiServer    string `json:"apiServer"`
+	Token        string `json:"token"`
+	ExtendParams string `json:"extendParams"`
 }
