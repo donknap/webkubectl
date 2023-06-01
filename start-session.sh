@@ -16,4 +16,5 @@ if [[ $all == ERROR:* ]]; then
     exit 1
 fi
 
+echo unshare --fork --pid --mount-proc --mount /opt/webkubectl/init-kubectl.sh ${all}
 unshare --fork --pid --mount-proc --mount /opt/webkubectl/init-kubectl.sh ${all}
