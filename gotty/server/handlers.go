@@ -326,6 +326,9 @@ func (server *Server) handleKubeConfigApi(w http.ResponseWriter, r *http.Request
 		Title: request.Name,
 		Arg:   strings.Replace(request.KubeConfig, " ", "", -1),
 	}
+	if request.ExtendParams != "" {
+		ttyParameter.Arg += " " + request.ExtendParams + " --type=config"
+	}
 	if err := server.cache.Add(token, &ttyParameter, time.Duration(server.options.TokenExpiresDuration)*time.Second); err != nil {
 		log.Printf("save token and ttyParam err:%s", err.Error())
 		result.Success = false

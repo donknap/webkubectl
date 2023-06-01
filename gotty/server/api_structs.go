@@ -7,8 +7,9 @@ type ApiResponse struct {
 }
 
 type KubeConfigRequest struct {
-	Name       string `json:"name"`
-	KubeConfig string `json:"kubeConfig"`
+	Name         string `json:"name"`
+	KubeConfig   string `json:"kubeConfig"`
+	ExtendParams string `json:"extendParams"`
 }
 
 type KubeTokenRequest struct {
