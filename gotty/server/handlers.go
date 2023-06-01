@@ -141,7 +141,9 @@ func (server *Server) processWSConn(ctx context.Context, conn *websocket.Conn) e
 	} else {
 		arg = "ERROR:No Token Provided"
 	}
-	params.Add("arg", arg)
+	for _, value := range strings.Split(arg, " ") {
+		params.Add("arg", value)
+	}
 	//log.Println("arg: " + arg)
 	var slave Slave
 	slave, err = server.factory.New(params)
@@ -324,10 +326,7 @@ func (server *Server) handleKubeConfigApi(w http.ResponseWriter, r *http.Request
 	token := randomstring.Generate(20)
 	ttyParameter := cache.TtyParameter{
 		Title: request.Name,
-		Arg:   strings.Replace(request.KubeConfig, " ", "", -1),
-	}
-	if request.ExtendParams != "" {
-		ttyParameter.Arg += " " + request.ExtendParams + " --type=config"
+		Arg:   fmt.Sprintf("--kube-config=%s --extend-params=%s --type=config", strings.Replace(request.KubeConfig, " ", "", -1), request.ExtendParams),
 	}
 	if err := server.cache.Add(token, &ttyParameter, time.Duration(server.options.TokenExpiresDuration)*time.Second); err != nil {
 		log.Printf("save token and ttyParam err:%s", err.Error())
@@ -385,7 +384,7 @@ func (server *Server) handleKubeTokenApi(w http.ResponseWriter, r *http.Request)
 	token := randomstring.Generate(20)
 	ttyParameter := cache.TtyParameter{
 		Title: request.Name,
-		Arg:   strings.Replace(request.ApiServer, " ", "", -1) + " " + strings.Replace(request.Token, " ", "", -1),
+		Arg:   fmt.Sprintf("--api-server=%s --token=%s --type=token", strings.Replace(request.ApiServer, " ", "", -1), strings.Replace(request.Token, " ", "", -1)),
 	}
 	if err := server.cache.Add(token, &ttyParameter, time.Duration(server.options.TokenExpiresDuration)*time.Second); err != nil {
 		log.Printf("save token and ttyParam err:%s", err.Error())
