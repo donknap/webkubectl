@@ -1,10 +1,6 @@
 #!/bin/bash
 set -e
 
-if [ "${WELCOME_BANNER}" ]; then
-    echo ${WELCOME_BANNER}
-fi
-
 # 解析命令行参数
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -41,7 +37,7 @@ echo -e 'PS1="> "\nalias ll="ls -la"' >> .bashrc
 mkdir -p .kube
 
 export HOME=/nonexistent
-if [ "${type}" = "config" ]; then
+if [ "${type}" == "config" ]; then
     echo $kube_config| base64 -d > .kube/config
 else
     echo `kubectl config set-credentials webkubectl-user --token=${token}` > /dev/null 2>&1
@@ -64,10 +60,10 @@ if [[ -n $extend_params ]]; then
     fi
 
     if [[ -z "${command}" ]]; then
-        command = "bash"
+        command="bash"
     fi
 
-    extend_shell = "kubectl exec -it ${podId} -n ${namespace} ${containerNameStr}-- ${command}"
+    extend_shell="kubectl exec -it ${podId} -n ${namespace} ${containerNameStr}-- ${command}"
 fi
 
 if [ ${KUBECTL_INSECURE_SKIP_TLS_VERIFY} == "true" ];then
@@ -86,6 +82,11 @@ if [ ${KUBECTL_INSECURE_SKIP_TLS_VERIFY} == "true" ];then
     }
 fi
 
+# 欢迎语
+if [ "${WELCOME_BANNER}" ] && [ -z "${extend_params}" ]; then
+    echo "${WELCOME_BANNER}"
+fi
+
 chown -R nobody:nogroup .kube
 
 export TMPDIR=/nonexistent
@@ -100,4 +101,8 @@ done
 
 unset WELCOME_BANNER PPROF_ENABLED KUBECTL_INSECURE_SKIP_TLS_VERIFY SESSION_STORAGE_SIZE KUBECTL_VERSION
 
-exec su -s /bin/bash nobody $extend_shell
+if [[ -n $extend_params ]]; then
+    exec su -s /bin/bash -c "$extend_shell" nobody
+else
+    exec su -s /bin/bash nobody
+fi
